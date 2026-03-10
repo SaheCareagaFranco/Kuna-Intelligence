@@ -41,7 +41,7 @@ def _get_connection():
         connect_timeout=int(os.getenv("QUERY_TIMEOUT_SECONDS", 120)),
     )
 
-QUERY = 'SELECT * FROM "playground"."kua_intelligence_v1"'
+QUERY = 'SELECT * FROM "playground"."kua_intelligence_v1" WHERE fecha_lead >= %s AND fecha_lead < %s'
 
 DTYPE_MAP = {
     "fecha_lead":"datetime64[ns]","fecha_firma":"datetime64[ns]",
@@ -99,45 +99,60 @@ def _clean_old_cache():
         if f != cur:
             f.unlink(missing_ok=True)
 
-CHUNK_SIZE = 50_000   # filas por lote (cursor server-side)
+def _fetch_month(conn, date_from, date_to):
+    """Descarga un rango de fechas en una sola conexión (~3 min max)."""
+    cur = conn.cursor(f"kuna_{date_from.strftime('%Y%m')}")
+    cur.itersize = 50_000
+    cur.execute(QUERY, (date_from.strftime("%Y-%m-%d"), date_to.strftime("%Y-%m-%d")))
+    chunks, cols = [], None
+    while True:
+        rows = cur.fetchmany(50_000)
+        if not rows:
+            break
+        if cols is None:
+            cols = [d[0] for d in cur.description]
+        chunks.append(pd.DataFrame(rows, columns=cols))
+    cur.close()
+    conn.commit()
+    return pd.concat(chunks, ignore_index=True) if chunks else pd.DataFrame(columns=cols or [])
 
 def fetch_data(force_refresh=False):
     cache = _cache_path()
     if cache.exists() and not force_refresh:
         logger.info("Cargando cache: %s", cache.name)
         return pd.read_parquet(cache)
-    logger.info("Consultando Redshift (cursor server-side, chunks de %d)...", CHUNK_SIZE)
+
+    # Descarga por mes para evitar timeout WLM (~20 min límite corporativo)
+    from dateutil.relativedelta import relativedelta
+    START = datetime(2025, 9, 1)
+    END   = datetime.now().replace(day=1) + relativedelta(months=1)  # primer día del mes siguiente
+
+    meses = []
+    d = START
+    while d < END:
+        meses.append((d, d + relativedelta(months=1)))
+        d += relativedelta(months=1)
+
     t0 = datetime.now()
-    conn = None
-    try:
-        conn = _get_connection()
-        logger.info("Conexion a Redshift OK — %s/%s", os.getenv("REDSHIFT_HOST"), os.getenv("REDSHIFT_DATABASE"))
-        # Cursor nombrado = server-side cursor: Redshift envía filas en streaming,
-        # mantiene la conexión activa y evita timeout SSL por inactividad.
-        cur = conn.cursor("kuna_cursor")
-        cur.itersize = CHUNK_SIZE
-        cur.execute(QUERY)
-        # Con cursor nombrado, description se llena tras el primer fetch
-        chunks, total = [], 0
-        while True:
-            rows = cur.fetchmany(CHUNK_SIZE)
-            if not rows:
-                break
-            if not chunks:
-                cols = [d[0] for d in cur.description]
-            chunks.append(pd.DataFrame(rows, columns=cols))
-            total += len(rows)
-            logger.info("  ...%d filas recibidas", total)
-        cur.close()
-        conn.commit()   # cierra el cursor server-side correctamente
-        df = pd.concat(chunks, ignore_index=True) if chunks else pd.DataFrame()
-        logger.info("Query OK en %.1fs — %d filas", (datetime.now()-t0).total_seconds(), len(df))
-    except Exception as e:
-        logger.error("Error en query: %s", e)
-        raise
-    finally:
-        if conn:
-            conn.close()
+    all_chunks = []
+    for i, (d_from, d_to) in enumerate(meses, 1):
+        logger.info("Descargando mes %d/%d: %s → %s", i, len(meses),
+                    d_from.strftime("%Y-%m"), d_to.strftime("%Y-%m"))
+        conn = None
+        try:
+            conn = _get_connection()
+            chunk = _fetch_month(conn, d_from, d_to)
+            logger.info("  %d filas", len(chunk))
+            all_chunks.append(chunk)
+        except Exception as e:
+            logger.error("Error en mes %s: %s", d_from.strftime("%Y-%m"), e)
+            raise
+        finally:
+            if conn:
+                conn.close()
+
+    df = pd.concat(all_chunks, ignore_index=True) if all_chunks else pd.DataFrame()
+    logger.info("Query completa en %.1fs — %d filas totales", (datetime.now()-t0).total_seconds(), len(df))
     df = _cast_types(df)
     _validate_schema(df)
     df = _enrich(df)
