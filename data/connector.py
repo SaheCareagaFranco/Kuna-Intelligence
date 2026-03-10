@@ -41,11 +41,7 @@ def _get_connection():
         connect_timeout=int(os.getenv("QUERY_TIMEOUT_SECONDS", 120)),
     )
 
-QUERY = """
-SELECT *
-FROM "playground"."kua_intelligence_v1"
-ORDER BY fecha_firma DESC NULLS LAST
-"""
+QUERY = 'SELECT * FROM "playground"."kua_intelligence_v1"'
 
 DTYPE_MAP = {
     "fecha_lead":"datetime64[ns]","fecha_firma":"datetime64[ns]",
@@ -103,18 +99,38 @@ def _clean_old_cache():
         if f != cur:
             f.unlink(missing_ok=True)
 
+CHUNK_SIZE = 50_000   # filas por lote (cursor server-side)
+
 def fetch_data(force_refresh=False):
     cache = _cache_path()
     if cache.exists() and not force_refresh:
         logger.info("Cargando cache: %s", cache.name)
         return pd.read_parquet(cache)
-    logger.info("Consultando Redshift...")
+    logger.info("Consultando Redshift (cursor server-side, chunks de %d)...", CHUNK_SIZE)
     t0 = datetime.now()
     conn = None
     try:
         conn = _get_connection()
         logger.info("Conexion a Redshift OK — %s/%s", os.getenv("REDSHIFT_HOST"), os.getenv("REDSHIFT_DATABASE"))
-        df = pd.read_sql(QUERY, conn)
+        # Cursor nombrado = server-side cursor: Redshift envía filas en streaming,
+        # mantiene la conexión activa y evita timeout SSL por inactividad.
+        cur = conn.cursor("kuna_cursor")
+        cur.itersize = CHUNK_SIZE
+        cur.execute(QUERY)
+        # Con cursor nombrado, description se llena tras el primer fetch
+        chunks, total = [], 0
+        while True:
+            rows = cur.fetchmany(CHUNK_SIZE)
+            if not rows:
+                break
+            if not chunks:
+                cols = [d[0] for d in cur.description]
+            chunks.append(pd.DataFrame(rows, columns=cols))
+            total += len(rows)
+            logger.info("  ...%d filas recibidas", total)
+        cur.close()
+        conn.commit()   # cierra el cursor server-side correctamente
+        df = pd.concat(chunks, ignore_index=True) if chunks else pd.DataFrame()
         logger.info("Query OK en %.1fs — %d filas", (datetime.now()-t0).total_seconds(), len(df))
     except Exception as e:
         logger.error("Error en query: %s", e)
