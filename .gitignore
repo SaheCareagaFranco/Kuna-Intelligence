@@ -1,0 +1,25 @@
+# Secretos
+.env
+*.env
+
+# Cache y datos generados
+data/cache/
+logs/
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+*.egg-info/
+
+# IDEs
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Archivos temporales de prueba
+prueba1.py
