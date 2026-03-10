@@ -16,6 +16,11 @@ from plotly.subplots import make_subplots
 from data.connector import fetch_data, last_update
 from data.refresh import start_scheduler
 from metrics.ciclo_venta import stats_ciclo, kpis_principales, tendencia_semanal, ciclo_por_dimension
+from components.ui import (
+    load_css, logo_html, kpi_card, stat_strip,
+    section_title, records_badge, r2_card, apply_layout,
+    GREEN, GREEN2, NAVY, AMBER, NEUTRAL, PALETTE, fmt_money, green_scale,
+)
 
 # ── Logging ───────────────────────────────────────────────────────────────────
 Path("logs").mkdir(exist_ok=True)

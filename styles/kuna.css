@@ -1,0 +1,172 @@
+/* ═══════════════════════════════════════════════════════
+   KUNA INTELLIGENCE — Design System
+   Archivo: styles/kuna.css
+   Importar en app.py con: load_css()
+   ═══════════════════════════════════════════════════════ */
+
+/* ── Google Fonts ──────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Noto+Sans:wght@400;500;600;700&display=swap');
+
+/* ── Tokens de marca ──────────────────────────────────── */
+:root {
+  --g:      #1AC77C;
+  --g2:     #1DE08C;
+  --navy:   #002236;
+  --navy2:  #00304C;
+  --amber:  #E8A838;
+  --black:  #171D1C;
+  --n900:   #2C3533;
+  --n600:   #485856;
+  --n400:   #748C86;
+  --n200:   #C0CEC9;
+  --n100:   #E0E7E4;
+  --n50:    #F6F7F7;
+  --white:  #FFFFFF;
+  --radius: 12px;
+  --shadow: 0 1px 8px rgba(23,29,28,.08);
+}
+
+/* ── Base ──────────────────────────────────────────────── */
+html, body, [class*="css"] {
+  font-family: 'Noto Sans', sans-serif !important;
+  background: var(--n50) !important;
+  color: var(--black) !important;
+}
+
+/* ── Headings → Outfit ─────────────────────────────────── */
+h1,h2,h3,h4,
+.stMarkdown h1, .stMarkdown h2, .stMarkdown h3,
+[data-testid="stMetricValue"],
+[data-testid="stMetricLabel"] {
+  font-family: 'Outfit', sans-serif !important;
+}
+
+/* ── Sidebar ───────────────────────────────────────────── */
+[data-testid="stSidebar"] {
+  background: var(--black) !important;
+  border-right: 1px solid var(--n900) !important;
+}
+[data-testid="stSidebar"] * {
+  color: var(--n200) !important;
+}
+[data-testid="stSidebar"] .stRadio label {
+  font-size: .84rem !important;
+  padding: 8px 10px !important;
+  border-radius: 8px !important;
+  cursor: pointer !important;
+  transition: all .15s !important;
+}
+[data-testid="stSidebar"] .stRadio label:hover {
+  background: rgba(26,199,124,.1) !important;
+  color: var(--g) !important;
+}
+[data-testid="stSidebar"] .stSelectbox label,
+[data-testid="stSidebar"] .stMultiSelect label,
+[data-testid="stSidebar"] .stDateInput label {
+  font-family: 'Outfit', sans-serif !important;
+  font-size: .6rem !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: .09em !important;
+  color: var(--n400) !important;
+}
+/* Inputs del sidebar */
+[data-testid="stSidebar"] .stSelectbox > div > div,
+[data-testid="stSidebar"] .stMultiSelect > div > div,
+[data-testid="stSidebar"] .stDateInput > div > div > input {
+  background: var(--n900) !important;
+  border: 1px solid var(--n900) !important;
+  border-radius: 8px !important;
+  color: var(--n200) !important;
+  font-size: .8rem !important;
+}
+[data-testid="stSidebar"] .stSelectbox > div > div:focus-within,
+[data-testid="stSidebar"] .stMultiSelect > div > div:focus-within {
+  border-color: var(--g) !important;
+}
+
+/* ── Main layout ───────────────────────────────────────── */
+.main .block-container {
+  padding: 2rem 2.5rem 2rem 2.5rem !important;
+  max-width: 100% !important;
+}
+
+/* ── Botones ───────────────────────────────────────────── */
+.stButton > button {
+  background: var(--g) !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 8px !important;
+  font-family: 'Outfit', sans-serif !important;
+  font-weight: 700 !important;
+  font-size: .8rem !important;
+  padding: 8px 16px !important;
+  transition: opacity .15s !important;
+}
+.stButton > button:hover {
+  opacity: .85 !important;
+  border: none !important;
+}
+
+/* ── Download button ───────────────────────────────────── */
+.stDownloadButton > button {
+  background: var(--navy) !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 8px !important;
+  font-family: 'Outfit', sans-serif !important;
+  font-weight: 700 !important;
+}
+
+/* ── Expander ──────────────────────────────────────────── */
+.streamlit-expanderHeader {
+  font-family: 'Outfit', sans-serif !important;
+  font-size: .8rem !important;
+  font-weight: 700 !important;
+  background: var(--white) !important;
+  border: 1px solid var(--n100) !important;
+  border-radius: var(--radius) !important;
+}
+
+/* ── Dataframe ─────────────────────────────────────────── */
+[data-testid="stDataFrame"] {
+  border: 1px solid var(--n100) !important;
+  border-radius: var(--radius) !important;
+  box-shadow: var(--shadow) !important;
+}
+
+/* ── Separadores ───────────────────────────────────────── */
+hr {
+  border-color: var(--n100) !important;
+  margin: 16px 0 !important;
+}
+
+/* ── Selectbox / multiselect ───────────────────────────── */
+.stSelectbox > div > div,
+.stMultiSelect > div > div {
+  background: var(--white) !important;
+  border: 1.5px solid var(--n100) !important;
+  border-radius: 8px !important;
+  font-size: .8rem !important;
+}
+.stSelectbox > div > div:focus-within,
+.stMultiSelect > div > div:focus-within {
+  border-color: var(--g) !important;
+  box-shadow: 0 0 0 3px rgba(26,199,124,.12) !important;
+}
+
+/* ── Toggle ────────────────────────────────────────────── */
+.stToggle label span {
+  font-size: .8rem !important;
+  font-weight: 600 !important;
+}
+
+/* ── Scrollbar ─────────────────────────────────────────── */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: var(--n50); }
+::-webkit-scrollbar-thumb { background: var(--n100); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--n200); }
+
+/* ── Plotly charts: fondo transparente ─────────────────── */
+.js-plotly-plot .plotly .bg { fill: transparent !important; }
+.js-plotly-plot .plotly .gridlayer path { stroke: var(--n100) !important; }
