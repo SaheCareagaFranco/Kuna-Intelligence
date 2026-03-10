@@ -27,8 +27,8 @@ logging.basicConfig(level=logging.INFO,
 logger = logging.getLogger("kuna.app")
 
 # ── Brand ─────────────────────────────────────────────────────────────────────
-G="\#1AC77C"; G2="\#1DE08C"; NAVY="\#002236"; NAVY2="\#00304C"; AMBER="\#E8A838"; NEUTRAL="\#748C86"
-PALETTE=[G,NAVY,AMBER,G2,"\#0074B4",NEUTRAL,"\#C0CEC9"]
+G="#1AC77C"; G2="#1DE08C"; NAVY="#002236"; NAVY2="#00304C"; AMBER="#E8A838"; NEUTRAL="#748C86"
+PALETTE=[G,NAVY,AMBER,G2,"#0074B4",NEUTRAL,"#C0CEC9"]
 
 st.set_page_config(page_title="Kuna Intelligence", page_icon="🟢",
                    layout="wide", initial_sidebar_state="expanded")
@@ -38,22 +38,22 @@ st.markdown("""
 <style>
 html,body,[class*="css"]{font-family:'Noto Sans',sans-serif}
 h1,h2,h3,.stMetric label,[data-testid="stMetricValue"]{font-family:'Outfit',sans-serif!important}
-[data-testid="stSidebar"]{background:\#171D1C!important;border-right:1px solid \#2C3533}
-[data-testid="stSidebar"] *{color:\#C0CEC9!important}
-[data-testid="stSidebar"] .stRadio label{color:\#C0CEC9!important;font-size:.84rem}
-.kpi-card{background:white;border-radius:12px;padding:20px 18px;border-left:4px solid \#1AC77C;box-shadow:0 1px 8px rgba(23,29,28,.07);margin-bottom:4px}
-.kpi-label{font-family:'Outfit',sans-serif;font-size:.62rem;text-transform:uppercase;letter-spacing:.1em;color:\#748C86;margin-bottom:6px;font-weight:600}
-.kpi-value{font-family:'Outfit',sans-serif;font-size:1.9rem;font-weight:900;color:\#171D1C;line-height:1;letter-spacing:-.03em}
-.kpi-meta{font-size:.68rem;color:\#748C86;margin-top:5px}
-.kpi-badge{background:rgba(26,199,124,.12);color:\#1AC77C;font-weight:700;font-size:.62rem;padding:2px 7px;border-radius:20px;margin-left:4px}
+[data-testid="stSidebar"]{background:#171D1C!important;border-right:1px solid #2C3533}
+[data-testid="stSidebar"] *{color:#C0CEC9!important}
+[data-testid="stSidebar"] .stRadio label{color:#C0CEC9!important;font-size:.84rem}
+.kpi-card{background:white;border-radius:12px;padding:20px 18px;border-left:4px solid #1AC77C;box-shadow:0 1px 8px rgba(23,29,28,.07);margin-bottom:4px}
+.kpi-label{font-family:'Outfit',sans-serif;font-size:.62rem;text-transform:uppercase;letter-spacing:.1em;color:#748C86;margin-bottom:6px;font-weight:600}
+.kpi-value{font-family:'Outfit',sans-serif;font-size:1.9rem;font-weight:900;color:#171D1C;line-height:1;letter-spacing:-.03em}
+.kpi-meta{font-size:.68rem;color:#748C86;margin-top:5px}
+.kpi-badge{background:rgba(26,199,124,.12);color:#1AC77C;font-weight:700;font-size:.62rem;padding:2px 7px;border-radius:20px;margin-left:4px}
 .stat-strip{display:flex;background:white;border-radius:12px;overflow:hidden;box-shadow:0 1px 8px rgba(23,29,28,.07);margin-bottom:16px}
-.stat-item{flex:1;text-align:center;padding:13px 0;border-right:1px solid \#E0E7E4}
+.stat-item{flex:1;text-align:center;padding:13px 0;border-right:1px solid #E0E7E4}
 .stat-item:last-child{border-right:none}
-.stat-val{font-family:'Outfit',sans-serif;font-size:1.1rem;font-weight:800;color:\#171D1C}
-.stat-val.green{color:\#1AC77C}
-.stat-lbl{font-size:.6rem;text-transform:uppercase;letter-spacing:.08em;color:\#748C86;margin-top:3px}
-.section-title{font-family:'Outfit',sans-serif;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:\#748C86;margin:20px 0 10px;padding-left:2px}
-.stButton>button{background:\#1AC77C!important;color:white!important;border:none!important;border-radius:8px!important;font-family:'Outfit',sans-serif!important;font-weight:700!important}
+.stat-val{font-family:'Outfit',sans-serif;font-size:1.1rem;font-weight:800;color:#171D1C}
+.stat-val.green{color:#1AC77C}
+.stat-lbl{font-size:.6rem;text-transform:uppercase;letter-spacing:.08em;color:#748C86;margin-top:3px}
+.section-title{font-family:'Outfit',sans-serif;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#748C86;margin:20px 0 10px;padding-left:2px}
+.stButton>button{background:#1AC77C!important;color:white!important;border:none!important;border-radius:8px!important;font-family:'Outfit',sans-serif!important;font-weight:700!important}
 </style>
 """, unsafe_allow_html=True)
 
@@ -65,11 +65,11 @@ if "scheduler_started" not in st.session_state:
 # ── Helpers ───────────────────────────────────────────────────────────────────
 PLOT_LAYOUT = dict(
     paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
-    font=dict(family="Noto Sans", color="\#485856", size=11),
+    font=dict(family="Noto Sans", color="#485856", size=11),
     margin=dict(t=36,b=24,l=8,r=8),
     legend=dict(orientation="h",yanchor="bottom",y=-0.28,xanchor="left",x=0),
-    xaxis=dict(gridcolor="\#E0E7E4",linecolor="\#C0CEC9"),
-    yaxis=dict(gridcolor="\#E0E7E4",linecolor="\#C0CEC9"),
+    xaxis=dict(gridcolor="#E0E7E4",linecolor="#C0CEC9"),
+    yaxis=dict(gridcolor="#E0E7E4",linecolor="#C0CEC9"),
 )
 
 def fig_(fig, h=300):
@@ -200,7 +200,7 @@ def page_dashboard(df):
         fig.add_trace(go.Bar(x=tend["semana_firma"],y=tend["contratos"],name="Contratos",marker_color="rgba(26,199,124,.5)"),secondary_y=False)
         fig.add_trace(go.Scatter(x=tend["semana_firma"],y=tend["ciclo_prom"].round(1),name="Ciclo prom.",line=dict(color=AMBER,width=2),mode="lines+markers"),secondary_y=True)
         fig.update_layout(title="Contratos y ciclo semanal",height=260,**PLOT_LAYOUT)
-        fig.update_yaxes(title_text="Contratos",secondary_y=False,gridcolor="\#E0E7E4")
+        fig.update_yaxes(title_text="Contratos",secondary_y=False,gridcolor="#E0E7E4")
         fig.update_yaxes(title_text="Días prom.",secondary_y=True,gridcolor="rgba(0,0,0,0)")
         st.plotly_chart(fig,use_container_width=True)
 
@@ -274,7 +274,7 @@ def page_grupos(df):
     fig.add_trace(go.Bar(x=gs["grupo_origen"],y=gs["contratos"],name="Contratos",marker_color="rgba(26,199,124,.45)"),secondary_y=False)
     fig.add_trace(go.Scatter(x=gs["grupo_origen"],y=gs["ciclo_prom"].round(1),name="Ciclo prom.",line=dict(color=AMBER,width=2),mode="lines+markers+text",text=gs["ciclo_prom"].round(1),textposition="top center"),secondary_y=True)
     fig.update_layout(title="Contratos y Ciclo por Grupo",height=320,**PLOT_LAYOUT)
-    fig.update_yaxes(title_text="Contratos",secondary_y=False,gridcolor="\#E0E7E4")
+    fig.update_yaxes(title_text="Contratos",secondary_y=False,gridcolor="#E0E7E4")
     fig.update_yaxes(title_text="Días prom.",secondary_y=True,gridcolor="rgba(0,0,0,0)")
     st.plotly_chart(fig,use_container_width=True)
 
